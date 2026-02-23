@@ -13,6 +13,7 @@ class Link(Base):
     user_id = Column(Integer,ForeignKey("users.user_id"),nullable=False)
     user = relationship("User",back_populates="links")
 
+
 class User(Base):
     __tablename__ = "users"
 

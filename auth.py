@@ -6,12 +6,13 @@ from fastapi.security import OAuth2PasswordBearer
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
 from sqlalchemy.orm import Session
+from config import settings
 from db import get_db
 from db_ops import get_user_by_id
 
-SECRET_KEY = "THIS_IS_A_SECRET"
+SECRET_KEY = settings.SECRET_KEY
 ALGO = "HS256"
-ACCESS_TOKEN_EXPIRE = 60
+ACCESS_TOKEN_EXPIRE = settings.ACCESS_TOKEN_EXPIRE
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 ph = PasswordHasher()
