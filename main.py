@@ -33,6 +33,7 @@ class LinkResponse(BaseModel):
     short_url: str
     long_url: str
     created_at: datetime
+    click_count:int
 
 class UserRequest(BaseModel):
     email: EmailStr
@@ -100,10 +101,12 @@ def get_all(
 def redirect(short_code:str,db:Session=Depends(get_db)):
     link = get_link_by_short_url(db=db,short_url=short_code)
     
-    print(short_code,link)
     
     if not link:
         raise HTTPException(status_code=404,detail='Link not found')
+
+    link.click_count += 1
+    db.commit()    
     return RedirectResponse(url=link.long_url,status_code=302)
     
 

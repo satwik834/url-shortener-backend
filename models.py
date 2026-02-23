@@ -11,6 +11,7 @@ class Link(Base):
     long_url = Column(String,nullable=False)
     short_url = Column(String,unique=True,index=True)
     user_id = Column(Integer,ForeignKey("users.user_id"),nullable=False)
+    click_count = Column(Integer,default=0)
     user = relationship("User",back_populates="links")
 
 
