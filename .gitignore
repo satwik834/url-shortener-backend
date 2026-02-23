@@ -1,0 +1,39 @@
+# Byte-compiled / optimized files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+env/
+.venv/
+ENV/
+
+# Environment variables
+.env
+.env.*
+
+# VS Code
+.vscode/
+
+# PyCharm
+.idea/
+
+# Logs
+*.log
+
+# Database files
+*.sqlite3
+db.sqlite3
+
+# Build / Distribution
+build/
+dist/
+*.egg-info/
+
+# Migrations cache (optional - keep migrations folder though)
+*.pyc
+
+# OS files
+.DS_Store
+Thumbs.db
