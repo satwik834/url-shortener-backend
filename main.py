@@ -76,11 +76,7 @@ def shorten(
     current_user = Depends(get_current_user)
     
 ):
-    if not check_rate_limit(current_user.user_id):
-        raise HTTPException(
-            status_code=429,
-            detail="Rate limit exceeded. Try again later."
-        )
+    check_rate_limit(current_user.user_id)
     try:
         user_id = int(current_user.user_id)
         long_url = str(request.long_url)
