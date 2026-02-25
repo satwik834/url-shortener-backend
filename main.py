@@ -9,6 +9,9 @@ from db_ops import *
 from db import get_db
 from typing import List
 from auth import hash_password,verify_password,create_access_token,get_current_user
+from rate_limiter import check_rate_limit
+from Services.link_service import resolve_short_code
+from redis_client import redis_client
 
 
 app = FastAPI()
@@ -73,6 +76,11 @@ def shorten(
     current_user = Depends(get_current_user)
     
 ):
+    if not check_rate_limit(current_user.user_id):
+        raise HTTPException(
+            status_code=429,
+            detail="Rate limit exceeded. Try again later."
+        )
     try:
         user_id = int(current_user.user_id)
         long_url = str(request.long_url)
@@ -99,15 +107,14 @@ def get_all(
 
 @app.get('/{short_code}')
 def redirect(short_code:str,db:Session=Depends(get_db)):
-    link = get_link_by_short_url(db=db,short_url=short_code)
+    link = resolve_short_code(db=db,short_code=short_code)
     
     
     if not link:
         raise HTTPException(status_code=404,detail='Link not found')
 
-    link.click_count += 1
-    db.commit()    
-    return RedirectResponse(url=link.long_url,status_code=302)
+  
+    return RedirectResponse(url=link,status_code=302)
     
 
 @app.delete("/{short_code}")
@@ -133,3 +140,20 @@ def me(current_user = Depends(get_current_user)):
         "user_id": current_user.user_id,
         "email":current_user.email
     }
+
+
+@app.post("/admin/flush_clicks")
+def flush_clicks(db:Session = Depends(get_db)):
+    keys = redis_client.keys("clicks:*")
+
+    for key in keys:
+        short_code = key.split(":")[1]
+        count = int(redis_client.get(key))
+
+        link = get_link_by_short_url(db=db,short_url=short_code)
+        if link:
+            link.click_count += count
+            db.commit()
+        
+        redis_client.delete(key)
+    return {"status" : "flushed"}

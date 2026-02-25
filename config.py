@@ -4,6 +4,7 @@ class Settings(BaseSettings):
     SECRET_KEY: str
     DATABASE_URL: str
     ACCESS_TOKEN_EXPIRE: int = 30
+    REDIS_URL:str
 
     class Config:
         env_file = ".env"
