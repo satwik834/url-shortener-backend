@@ -8,3 +8,4 @@ argon2-cffi
 redis
 psycopg2-binary
 python-dotenv
+pydantic-settings

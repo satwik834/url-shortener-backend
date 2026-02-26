@@ -7,7 +7,8 @@ DB_URL = settings.DATABASE_URL
 engine = create_engine(
     DB_URL,
     echo=True,
-    future=True
+    future=True,
+    pool_pre_ping=True
 )
 
 SessionLocal = sessionmaker(
