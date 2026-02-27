@@ -79,7 +79,7 @@ The backend is fully dockerized. To build and run using Docker:
    ```bash
    docker run -p 8000:8000 --env-file .env url-shortener-backend
    ```
-   *Note: Using `docker-compose.yml` is recommended to orchestrate PostgreSQL, Redis, and this API container together.*
+
 
 ## API Endpoints Overview
 
@@ -95,12 +95,3 @@ The backend is fully dockerized. To build and run using Docker:
 | `POST` | `/test/me` | Test current authentication context | Yes |
 | `POST` | `/admin/flush_clicks` | Flush Redis click counts to PostgreSQL database | No |
 
-## Contributing
-1. Fork the project.
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`).
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`).
-4. Push to the branch (`git push origin feature/AmazingFeature`).
-5. Open a Pull Request.
-
-## License
-Distributed under the MIT License. See `LICENSE` for more information.
