@@ -93,5 +93,5 @@ The backend is fully dockerized. To build and run using Docker:
 | `GET` | `/{short_code}` | Redirect to the original long URL | No |
 | `DELETE`| `/{short_code}` | Delete a specific short link | Yes |
 | `POST` | `/test/me` | Test current authentication context | Yes |
-| `POST` | `/admin/flush_clicks` | Flush Redis click counts to PostgreSQL database | No |
+
 

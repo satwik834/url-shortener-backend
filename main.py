@@ -12,9 +12,26 @@ from auth import hash_password,verify_password,create_access_token,get_current_u
 from rate_limiter import check_rate_limit
 from Services.link_service import resolve_short_code
 from redis_client import redis_client
+import asyncio
+from Services.click_flush_service import flush_clicks_to_db
+from contextlib import asynccontextmanager
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    task = asyncio.create_task(periodic_flush())
+    yield
+    task.cancel()
+app = FastAPI(lifespan=lifespan)
 
-app = FastAPI()
+async def periodic_flush():
+    while True:
+        try:
+            flush_clicks_to_db()
+        except Exception as e:
+            print("Flush error:", e)
+
+        await asyncio.sleep(60)
+
 origins = [
     "http://localhost:3000",      # React dev server
     "http://127.0.0.1:5173",      # Vite dev server
@@ -139,18 +156,3 @@ def me(current_user = Depends(get_current_user)):
     }
 
 
-@app.post("/admin/flush_clicks")
-def flush_clicks(db:Session = Depends(get_db)):
-    keys = redis_client.keys("clicks:*")
-
-    for key in keys:
-        short_code = key.split(":")[1]
-        count = int(redis_client.get(key))
-
-        link = get_link_by_short_url(db=db,short_url=short_code)
-        if link:
-            link.click_count += count
-            db.commit()
-        
-        redis_client.delete(key)
-    return {"status" : "flushed"}
