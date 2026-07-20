@@ -1,12 +1,12 @@
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker,declarative_base
-from config import settings
-DB_URL = settings.DATABASE_URL
+from sqlalchemy.orm import sessionmaker
+from app.config import settings
 
+DB_URL = settings.DATABASE_URL
 
 engine = create_engine(
     DB_URL,
-    echo=True,
+    echo=settings.ECHO_SQL,
     future=True,
     pool_pre_ping=True
 )
@@ -16,8 +16,6 @@ SessionLocal = sessionmaker(
     autocommit=False,
     autoflush=False
 )
-
-Base = declarative_base()
 
 def get_db():
     db = SessionLocal()
